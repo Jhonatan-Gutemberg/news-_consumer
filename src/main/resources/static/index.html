@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Notícias em Tempo Real</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Notícias do mundo</h1>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="status" class="status-indicator disconnected">Desconectado</div>
+        <div id="notifications-container"></div>
+        <div class="news-grid" id="news-list"></div>
+    </div>
+
+    <script src="js/newsService.js"></script>
+    <script src="js/uiManager.js"></script>
+    <script src="js/websocket.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new WebSocketManager();
+        });
+    </script>
+</body>
+</html>
