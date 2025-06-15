@@ -8,6 +8,66 @@ O projeto tem como objetivo consumir notícias em tempo real, armazená-las no b
 - **news**: Serviço produtor que coleta e valida as notícias
 - **news-consumer (este repositório)**: Serviço consumidor que processa, armazena e exibe as notícias
 
+## 🏗️ Arquitetura do Sistema
+
+O sistema de notícias é composto por dois serviços que se comunicam via Apache Kafka e compartilham um banco de dados:
+
+```mermaid
+graph TB
+    subgraph "News Producer"
+        A[API Externa] -->|HTTP| B[News Service]
+        B -->|Valida/Processa| C[Kafka Producer]
+    end
+
+    subgraph "Message Broker"
+        C -->|Publica| E[Apache Kafka]
+        E -->|news-feed topic| G[Kafka Consumer]
+    end
+
+    subgraph "News Consumer"
+        G -->|Notifica| H[News Consumer Service]
+        H -->|Notifica| I[WebSocket Server]
+        I -->|Atualiza| J[Frontend Web]
+        J -->|Requisita| K[REST API]
+    end
+
+    B -.->|Persiste| D[(PostgreSQL)]
+    H -.->|Consulta| D
+    K -.->|Consulta| D
+
+    classDef producerNode fill:#85C1E9,stroke:#333,stroke-width:2px;
+    classDef brokerNode fill:#E74C3C,stroke:#333,stroke-width:2px;
+    classDef consumerNode fill:#2ECC71,stroke:#333,stroke-width:2px;
+    classDef dbNode fill:#D6EAF8,stroke:#333,stroke-width:2px;
+
+    class A,B,C producerNode;
+    class E brokerNode;
+    class G,H,I,J,K consumerNode;
+    class D dbNode;
+```
+
+### Componentes
+
+1. **News Producer**
+   - API Externa: Fonte de notícias
+   - News Service: Processamento e validação
+   - Kafka Producer: Publicação de eventos
+
+2. **Message Broker**
+   - Apache Kafka: Sistema de mensageria
+   - Tópico 'news-feed': Canal de eventos
+
+3. **News Consumer**
+   - Kafka Consumer: Consumo de eventos
+   - Consumer Service: Gerenciamento
+   - WebSocket: Atualizações em tempo real
+   - Frontend: Interface do usuário
+   - REST API: Endpoints de consulta
+
+4. **Banco de Dados**
+   - PostgreSQL: Armazenamento centralizado
+   - Compartilhado entre os serviços
+
 ## 🛠️ Tecnologias Utilizadas
 
 - Java 17
@@ -25,6 +85,8 @@ O projeto tem como objetivo consumir notícias em tempo real, armazená-las no b
 - Java 17+
 - Maven
 - PostgreSQL
+
+
 
 ## 🚀 Configuração e Execução
 
